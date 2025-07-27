@@ -1,0 +1,5 @@
+create database hotel;
+use hotel;
+create table rooms (num int PRIMARY KEY,room_type varchar(50),Reserved BOOLEAN DEFAULT FALSE);
+create table Reservation(num int PRIMARY KEY,customer_name varchar(100),
+customer_email varchar(100),room_num int,checkin date, checkout date,FOREIGN KEY(room_num) REFERENCES rooms(num));
