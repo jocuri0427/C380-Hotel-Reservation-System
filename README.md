@@ -16,3 +16,4 @@ anyways, how to use git:
     "git push" to push to public repo
 
 NOTE: please please please do not add multiple little commits to your code. one big batch then commit. thanks
+NOTE: if there's a file that hasn't been created yet, push a empty file on the repo where you will work code on so that anyone that needs access to it can collaborate and create branches of code.
