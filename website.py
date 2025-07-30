@@ -37,7 +37,7 @@ class hoverCard(QFrame):
 
     def enterEvent(self, event):
         self.setStyleSheet(self.hoverStyle)
-
+    
     def leaveEvent(self, event):
         self.setStyleSheet(self.regStyle)
 
