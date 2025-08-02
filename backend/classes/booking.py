@@ -16,4 +16,4 @@ class Booking:
         price = self.room.price_per_night * number_of_nights
         return price
 
-    def cancel(self):
+    def cancel(self):  # need to finish
