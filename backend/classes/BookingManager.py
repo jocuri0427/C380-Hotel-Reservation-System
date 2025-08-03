@@ -1,6 +1,4 @@
 from datetime import date
-import Room
-import User
 from Booking import Booking
 
 
@@ -19,23 +17,15 @@ class BookingManager:
         else:
             return True
 
-    def create_booking(self, user_id: User, room_id: Room, start_date: date, end_date: date):
-        found_user = None
-        found_room = None
-        for user in self.users:
-            if user.user_id == user_id:
-                found_user = user
-                break
-
-        if found_user == None:
+    def create_booking(self, user_id: int, room_id: int, start_date: date, end_date: date):
+        found_user = next(
+            (user for user in self.users if user.user_id == user_id), None)
+        if found_user is None:
             return False
 
-        for room in self.rooms:
-            if room.room_number == room_id:
-                found_room = room
-                break
-
-        if found_room == None:
+        found_room = next(
+            (room for room in self.rooms if room.room_number == room_id), None)
+        if found_room is None:
             return False
 
         if not self.validate_input(start_date, end_date):
