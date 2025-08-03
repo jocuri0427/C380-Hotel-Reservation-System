@@ -1,4 +1,5 @@
 import Room
+import User
 
 
 class Booking:
@@ -16,4 +17,5 @@ class Booking:
         price = self.room.price_per_night * number_of_nights
         return price
 
-    def cancel(self):  # need to finish
+    def cancel(self):
+        self.status = "Cancelled"

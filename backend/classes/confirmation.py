@@ -4,4 +4,4 @@ class Confirmation:
         self.booking_details = booking_details
 
     def get_summary(self):
-        return self.confirmation_number + " " + self.booking_details
+        return self.confirmation_number + "\n" + self.booking_details
