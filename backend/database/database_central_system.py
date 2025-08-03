@@ -7,7 +7,7 @@ class Databasecentralsystem:
             host=host,
             user=user,
             password=password,
-            database=hotel
+            database=database
         )
         self.cursor = self.db.cursor(dictionary=True)
 
