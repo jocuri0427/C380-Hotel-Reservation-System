@@ -17,7 +17,7 @@ class Databasecentralsystem:
 
     def Reservation_save(self, name, email, room_num, checkin, checkout):
         self.cursor.execute("INSERT INTO Reservation(customer_name, customer_email, room_num, checkin, checkout) VALUES (%s,%s,%s,%s,%s)",
-                            (name, email, room_num, checkin, ckeckout))
+                            (name, email, room_num, checkin, checkout))
         self.cursor.execute(
             "UPDATE rooms SET Reserved = TRUE WHERE num=%s", (room_num,))
         self.db.commit()

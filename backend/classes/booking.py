@@ -1,5 +1,6 @@
 import Room
 import User
+from datetime import date
 
 
 class Booking:

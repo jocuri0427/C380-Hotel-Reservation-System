@@ -16,8 +16,10 @@ class User:
         }
         return user_details
 
-    def add_payment_method(self, method):
-        self.payment_methods.append(method)
+    def add_payment_method(self, method_id, card_type, card_number, expiration_date):
+        new_method = PaymentMethod.PaymentMethod(
+            method_id, card_type, card_number, expiration_date)
+        self.payment_methods.append(new_method)
 
     def remove_payment_method(self, method_id):
         for method in self.payment_methods:
