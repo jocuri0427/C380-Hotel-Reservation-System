@@ -1,3 +1,6 @@
+from datetime import date
+
+
 class Room:
     def __init__(self, room_number, room_type, price_per_night):
         self.room_number = room_number
@@ -17,7 +20,7 @@ class Room:
     def add_booking(self, booking):
         self.bookings.append(booking)
 
-    def is_available(self, start_date, end_date):
+    def is_available(self, start_date: date, end_date: date):
         for booking in self.bookings:
             if start_date < booking.end_date and end_date > booking.start_date:
                 return False

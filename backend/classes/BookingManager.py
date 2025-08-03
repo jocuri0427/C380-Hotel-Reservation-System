@@ -1,7 +1,7 @@
+from datetime import date
 import Room
 import User
 from Booking import Booking
-from datetime import date
 
 
 class BookingManager:
@@ -10,7 +10,7 @@ class BookingManager:
         self.users = []
         self.bookings = []
 
-    def validate_input(self, start_date, end_date):
+    def validate_input(self, start_date: date, end_date: date):
         today = date.today()
         if start_date >= end_date:
             return False
@@ -19,7 +19,7 @@ class BookingManager:
         else:
             return True
 
-    def create_booking(self, user_id, room_id, start_date, end_date):
+    def create_booking(self, user_id: User, room_id: Room, start_date: date, end_date: date):
         found_user = None
         found_room = None
         for user in self.users:

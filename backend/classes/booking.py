@@ -1,10 +1,10 @@
+from datetime import date
 import Room
 import User
-from datetime import date
 
 
 class Booking:
-    def __init__(self, booking_id, user, room, start_date, end_date, total_cost, status):
+    def __init__(self, booking_id, user: User, room: Room, start_date: date, end_date: date, total_cost, status):
         self.booking_id = booking_id
         self.user = user
         self.room = room
