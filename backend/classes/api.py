@@ -12,6 +12,7 @@ conn=db.connect()
 cursor=conn.cursor(dictionary=True)
 booking_manager=BookingManager()
 
+
 @app.route('/rooms', methods=['GET'])
 def get_all_rooms():
     try:
