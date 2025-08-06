@@ -1,3 +1,5 @@
+import uuid
+
 class Confirmation:
     def __init__(self, confirmation_number, booking_details):
         self.confirmation_number = confirmation_number
@@ -5,3 +7,7 @@ class Confirmation:
 
     def get_summary(self):
         return self.confirmation_number + "\n" + self.booking_details
+
+    def confirmation_number():
+        return str(uuid.uuid4())[:8].upper()
+
