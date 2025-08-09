@@ -9,7 +9,7 @@ class BookingForm(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Create Booking")
-        self.setGeometry(200, 100, 400, 300)
+        self.setGeometry(200, 100, 400, 350)
         self.create_ui()
 
     def create_ui(self):
@@ -39,6 +39,27 @@ class BookingForm(QWidget):
         self.check_out.setCalendarPopup(True)
         self.check_out.setDate(QDate.currentDate().addDays(1))
         form_layout.addWidget(self.check_out, 4, 1)
+
+        # Payment Information
+        form_layout.addWidget(QLabel("Card Type:"), 5, 0)
+        self.card_type = QComboBox()
+        self.card_type.addItems(["Visa", "MasterCard", "American Express"])
+        form_layout.addWidget(self.card_type, 5, 1)
+
+        form_layout.addWidget(QLabel("Card Number:"), 6, 0)
+        self.card_number = QLineEdit()
+        form_layout.addWidget(self.card_number, 6, 1)
+
+        form_layout.addWidget(QLabel("Expiration Date (MM/YY):"), 7, 0)
+        self.expiration_date = QLineEdit()
+        self.expiration_date.setInputMask("99/99")
+        form_layout.addWidget(self.expiration_date, 7, 1)
+
+        form_layout.addWidget(QLabel("CVV:"), 8, 0)
+        self.cvv = QLineEdit()
+        self.cvv.setEchoMode(QLineEdit.Password)
+        self.cvv.setMaxLength(4)
+        form_layout.addWidget(self.cvv, 8, 1)
 
         layout.addLayout(form_layout)
 
