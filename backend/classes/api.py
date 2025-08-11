@@ -8,11 +8,9 @@ from PaymentMethod import PaymentMethod
 app=Flask(__name__)
 
 db=Databasecentralsystem()
-conn=db.connect()
+conn=db.get_connection()
 cursor=conn.cursor(dictionary=True)
 booking_manager=BookingManager()
-confirmation=Confirmation()
-payment=PaymentMethod()
 
 
 @app.route('/rooms', methods=['GET'])
@@ -77,7 +75,7 @@ def create_booking():
             
             cursor.execute(" INSERT INTO bookings (user_id, room_id, check_in, check_out)VALUES (%s, %s, %s, %s)", (user_id, room_id, check_in, check_out))
             booking_id = cursor.lastrowid
-            confirmation=confirmation_number()
+            confirmation=Confirmation.gen_confirmation_number()
             
             cursor.execute("insert into payments(booking_id,card_number,expiry_date,cvv) values (%s,%s,%s,%s)",(booking_id,card_number,expiry_date,cvv))
             
