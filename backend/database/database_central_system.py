@@ -3,7 +3,7 @@ from mysql.connector import Error
 
 
 class Databasecentralsystem:
-    def __init__(self, host, user, password, database):
+    def __init__(self, host='localhost', user='root', password='jaypatel', database='hotel'):
         self.db = sql.connect(
             host=host,
             user=user,
