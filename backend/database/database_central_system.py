@@ -15,6 +15,7 @@ def get_connection(self):
     try:
         return mysql.connector.connect(**self.db_config)
     except Error as e:
+        print("database error",e)
         return None
 
     
