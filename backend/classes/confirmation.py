@@ -1,4 +1,6 @@
-import uuid
+import string
+import random
+
 
 class Confirmation:
     def __init__(self, confirmation_number, booking_details):
@@ -8,6 +10,7 @@ class Confirmation:
     def get_summary(self):
         return self.confirmation_number + "\n" + self.booking_details
 
-    def confirmation_number():
-        return str(uuid.uuid4())[:8].upper()
+    def gen_confirmation_number():
+        return "CON-" + ''.join(random.choices(string.ascii_uppercase + string.digits, k=7))
+
 
