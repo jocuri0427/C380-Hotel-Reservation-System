@@ -1,5 +1,5 @@
 from datetime import date
-from Booking import Booking
+from booking import Booking
 
 
 class BookingManager:
