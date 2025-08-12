@@ -1,6 +1,7 @@
 import mysql.connector
 from mysql.connector import Error
 
+
 class Databasecentralsystem:
     def __init__(self, host='localhost', user='root', password='jaypatel', database='hotel'):
         self.db_config = {
@@ -14,9 +15,5 @@ class Databasecentralsystem:
         try:
             return mysql.connector.connect(**self.db_config)
         except Error as e:
-            print("database error",e)
+            print("database error", e)
             return None
-    
-        
-
-  
