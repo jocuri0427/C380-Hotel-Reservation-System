@@ -1,14 +1,14 @@
 from flask import Flask,request,jsonify
-from datetime import datetime
 from database_central_system import Databasecentralsystem
 from BookingManager import BookingManager
-from confirmation import confirmation_number
+from confirmation import Confirmation
 from mysql.connector import Error
+from PaymentMethod import PaymentMethod
 
 app=Flask(__name__)
 
 db=Databasecentralsystem()
-conn=db.connect()
+conn=db.get_connection()
 cursor=conn.cursor(dictionary=True)
 booking_manager=BookingManager()
 
@@ -47,10 +47,18 @@ def create_booking():
     room_id=data["room_id"]
     check_in=data["check_in"]
     check_out=data["check_out"]
+    payment=data("payment")
+    card_number=payment("card_number")
+    expiry_date=payment("expiry_date")
+    cvv=payment("cvv")
+    
+    if not payment:
+        return jsonify({"error":"payment info"})
+    
+    conn = db.get_connection()
+    cursor = conn.cursor(dictionary=True)
     
     try:
-        conn = db.get_connection()
-        cursor = conn.cursor(dictionary=True)
         
         cursor.execute("select id from users where email = %s",(email,))
         user=cursor.fetchone()
@@ -59,11 +67,21 @@ def create_booking():
         else:
             cursor.execute("insert into users(name,email) values (%s,%s)", (name,email))
             user_id=cursor.lastrowid
+            
+            cursor.execute("select * from bookings where room_id = %s AND NOT (%s >= check_out OR %s <= check_in)",(room_id,check_in,check_out))
+            conflict=cursor.fetchone()
+            if conflict:
+                return jsonify({"error":"room not available"})
+            
             cursor.execute(" INSERT INTO bookings (user_id, room_id, check_in, check_out)VALUES (%s, %s, %s, %s)", (user_id, room_id, check_in, check_out))
             booking_id = cursor.lastrowid
+            confirmation=Confirmation.gen_confirmation_number()
+            
+            cursor.execute("insert into payments(booking_id,card_number,expiry_date,cvv) values (%s,%s,%s,%s)",(booking_id,card_number,expiry_date,cvv))
+            
             cursor.execute("UPDATE rooms SET available = 0 WHERE id = %s", (room_id,))
-            confirmation=confirmation_number()
-            cursor.execute("insert into reservations(booking_id,status,confirmationnumber) values (%s,%s,%s)",(booking_id,'confirmed',confirmation))
+    
+            cursor.execute("insert into reservations(booking_id,status,confirmation_number) values (%s,%s,%s)",(booking_id,'confirmed',confirmation))
             conn.commit()
         
         return jsonify({'message': 'Booking created', 'booking_id': booking_id,"confirmation_number":confirmation,"room_id":room_id,"check_in":check_in,"check_out":check_out})
@@ -83,13 +101,13 @@ def cancel_booking():
     try:
         conn=db
         cursor=conn.cursor(dictionary=True)
-        cursor.execute("select * from reservations where confirmationnumber = %s",(confirmation,))
+        cursor.execute("select * from reservations where confirmation_number = %s",(confirmation,))
         reservation=cursor.fetchone()
         if not reservation:
             return jsonify({'error':'wrong number'})
         
         booking_id=reservation['booking_id']
-        cursor.execute("update reservations set status='cancelled' where confirmationnumber=%s",(confirmation,))
+        cursor.execute("update reservations set status='cancelled' where confirmation_number=%s",(confirmation,))
         cursor.execute("select room_id from bookings where id=%s",(booking_id,))
         booking=cursor.fetchone()
         if booking:
@@ -111,10 +129,10 @@ def get_confirmation(confirmation_number):
         cursor = conn.cursor(dictionary=True)
 
         cursor.execute("""
-            SELECT b.user_id, b.room_id, b.check_in, b.check_out, r.confirmationnumber
+            SELECT b.user_id, b.room_id, b.check_in, b.check_out, r.confirmation_number
             FROM bookings b
             JOIN reservations r ON b.id = r.booking_id
-            WHERE r.confirmationnumber = %s
+            WHERE r.confirmation_number = %s
         """, (confirmation_number,))
         booking = cursor.fetchone()
 
@@ -128,7 +146,6 @@ def get_confirmation(confirmation_number):
         cursor.close()
         conn.close()
         
-
 if __name__ == '__main__':
     app.run(debug=True)
         
