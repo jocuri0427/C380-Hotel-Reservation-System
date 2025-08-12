@@ -1,6 +1,6 @@
 from datetime import date
-import Room
-import User
+from room import Room
+from user import User
 
 
 class Booking:
