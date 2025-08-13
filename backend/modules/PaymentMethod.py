@@ -1,4 +1,5 @@
 class PaymentMethod:
+    # essential card information
     def __init__(self, method_id, card_type, card_number, expiration_date):
         self.method_id = method_id
         self.card_type = card_type

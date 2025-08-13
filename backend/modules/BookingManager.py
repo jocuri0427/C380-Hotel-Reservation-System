@@ -8,6 +8,7 @@ class BookingManager:
         self.users = []
         self.bookings = []
 
+    # validates dates if they don't overlap with each other
     def validate_input(self, start_date: date, end_date: date):
         today = date.today()
         if start_date >= end_date:
@@ -17,6 +18,7 @@ class BookingManager:
         else:
             return True
 
+    # create the booking: loops to look for user and room, and if dates are valid, and room is available, creates a booking
     def create_booking(self, user_id: int, room_id: int, start_date: date, end_date: date):
         found_user = next(
             (user for user in self.users if user.user_id == user_id), None)
@@ -47,6 +49,7 @@ class BookingManager:
 
         return True
 
+    # cancel the booking: loops to find booking and cancels it
     def cancel_booking(self, booking_id):
         for booking in self.bookings:
             if booking.booking_id == booking_id:
