@@ -1,4 +1,4 @@
-import PaymentMethod
+from PaymentMethod import PaymentMethod
 
 
 class User:
@@ -20,7 +20,7 @@ class User:
 
     # add new payment method to list of payment methods
     def add_payment_method(self, method_id, card_type, card_number, expiration_date):
-        new_method = PaymentMethod.PaymentMethod(
+        new_method = PaymentMethod(
             method_id, card_type, card_number, expiration_date)
         self.payment_methods.append(new_method)
 
