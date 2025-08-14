@@ -19,9 +19,9 @@ class User:
         return user_details
 
     # add new payment method to list of payment methods
-    def add_payment_method(self, method_id, card_type, card_number, expiration_date):
+    def add_payment_method(self, method_id, card_type, card_number, expiration_date, cvv):
         new_method = PaymentMethod(
-            method_id, card_type, card_number, expiration_date)
+            method_id, card_type, card_number, expiration_date, cvv)
         self.payment_methods.append(new_method)
 
     # remove new payment method to list of payment methods: search and match payment info to remove
