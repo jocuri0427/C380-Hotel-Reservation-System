@@ -58,3 +58,34 @@ class BookingManager:
                 booking.cancel()
                 return True
         raise BookingNotFoundError(f"Booking ID {booking_id} not found.")
+
+    # modify the booking: loops to find booking, vaidates new dates, finds new room and checks availability, deletes old booking,
+    # updates booking details, and adds booking to new room
+    def modify_booking(self, booking_id: int, new_room_id: int, new_start_date: date, new_end_date: date):
+        booking = next(
+            (b for b in self.bookings if b.booking_id == booking_id), None)
+        if booking is None:
+            raise BookingNotFoundError(f"Booking ID {booking_id} not found.")
+
+        self.validate_input(new_start_date, new_end_date)
+
+        new_room = next(
+            (room for room in self.rooms if room.room_number == new_room_id), None)
+        if new_room is None:
+            raise RoomNotFoundError(f"Room ID {new_room_id} not found.")
+
+        if not new_room.is_available(new_start_date, new_end_date):
+            raise RoomUnavailableError(
+                "Room is not available for the selected dates.")
+
+        booking.room.remove_booking(booking)
+
+        booking.room = new_room
+        booking.start_date = new_start_date
+        booking.end_date = new_end_date
+        booking.total_cost = (
+            new_end_date - new_start_date).days * new_room.price_per_night
+
+        new_room.add_booking(booking)
+
+        return True
