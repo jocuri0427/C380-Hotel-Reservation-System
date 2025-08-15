@@ -1,5 +1,6 @@
 from datetime import date
 from booking import Booking
+from exceptions import InvalidDateRangeError, UserNotFoundError, RoomNotFoundError, RoomUnavailableError, BookingNotFoundError
 
 
 class BookingManager:
@@ -12,9 +13,9 @@ class BookingManager:
     def validate_input(self, start_date: date, end_date: date):
         today = date.today()
         if start_date >= end_date:
-            return False
+            raise InvalidDateRangeError("Start date must be before end date.")
         elif start_date < today:
-            return False
+            raise InvalidDateRangeError("Start date cannot be in the past.")
         else:
             return True
 
@@ -23,18 +24,19 @@ class BookingManager:
         found_user = next(
             (user for user in self.users if user.user_id == user_id), None)
         if found_user is None:
-            return False
+            raise UserNotFoundError(f"User ID {user_id} not found.")
 
         found_room = next(
             (room for room in self.rooms if room.room_number == room_id), None)
         if found_room is None:
-            return False
+            raise RoomNotFoundError(f"Room ID {room_id} not found.")
 
         if not self.validate_input(start_date, end_date):
             return False
 
         if not found_room.is_available(start_date, end_date):
-            return False
+            raise RoomUnavailableError(
+                "Room is not available for the selected dates.")
 
         number_of_nights = (end_date - start_date).days
         total_price = number_of_nights * found_room.price_per_night
@@ -55,4 +57,4 @@ class BookingManager:
             if booking.booking_id == booking_id:
                 booking.cancel()
                 return True
-        return False
+        raise BookingNotFoundError(f"Booking ID {booking_id} not found.")
