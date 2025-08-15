@@ -1,7 +1,8 @@
 from flask import Blueprint,request,jsonify
-from database_central_system import Databasecentralsystem
 import bcrypt
 from mysql.connector import Error
+
+from backend.database.database_central_system import Databasecentralsystem
 
 loginform=Blueprint('login',__name__)
 db=Databasecentralsystem()
