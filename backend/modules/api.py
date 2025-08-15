@@ -1,16 +1,15 @@
-from flask import Flask,request,jsonify
-
+from flask import Flask, request, jsonify
 from backend.database.database_central_system import Databasecentralsystem
-from confirmation import Confirmation
 from mysql.connector import Error
-#from login import loginapi
-#from registration import reservationapi
 
-#app.register_blueprint(login_form)
-#app.register_blueprint(registration_form)//
-
+from backend.modules.confirmation import Confirmation
+from backend.modules.loginapi import loginform  # Import login blueprint
+from backend.modules.reservationapi import registration_form  # Import registration blueprint
 
 app=Flask(__name__)
+
+app.register_blueprint(loginform)  # Register login routes
+app.register_blueprint(registration_form)  # Register registration routes
 
 db=Databasecentralsystem()
 conn=db.get_connection()

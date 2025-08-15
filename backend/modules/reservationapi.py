@@ -1,5 +1,5 @@
 from flask import Blueprint,request,jsonify
-from database_central_system import Databasecentralsystem
+from backend.database.database_central_system import Databasecentralsystem
 import bcrypt
 from mysql.connector import Error
 
@@ -26,6 +26,7 @@ def register_user():
         
         query="""insert into users(name,email,hash_password,user_type) values (%s,%s,%s,%s)"""
         cursor.execute(query,(name,email,hash_password,user_type))
+        conn.commit()  # Needed commit so it is added to db
         return jsonify({"message":"user created"})
     except Error as e:
         conn.rollback()
