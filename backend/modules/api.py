@@ -4,7 +4,7 @@ from mysql.connector import Error
 
 from backend.modules.confirmation import Confirmation
 from backend.modules.loginapi import loginform  # Import login blueprint
-from backend.modules.reservationapi import registration_form  # Import registration blueprint
+from backend.modules.registerapi import registration_form  # Import registration blueprint
 
 app = Flask(__name__)
 

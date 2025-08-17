@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QLabel, QApplication, QPushButton, QMessageBox
 )
 
-from bookingPage import BookingPage
+from frontend.bookingPage import BookingPage
 
 
 class DashboardPlaceHolder(QWidget):
