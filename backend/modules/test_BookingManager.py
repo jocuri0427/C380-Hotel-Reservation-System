@@ -1,13 +1,14 @@
 import unittest
 from datetime import date, timedelta
-from unittest.mock import MagicMock, PropertyMock
+from unittest.mock import patch
 
-# Assuming BookingManager is in a file named BookingManager.py
+# This assumes your test file and BookingManager.py are in the same directory
+# or that the path is set up correctly. Based on your error log, you may need to adjust this, e.g.:
+# from backend.modules.BookingManager import BookingManager, ...
 from BookingManager import BookingManager, InvalidDateRangeError, UserNotFoundError, RoomNotFoundError, RoomUnavailableError, BookingNotFoundError
 
 # --- Mock Objects ---
-# Since we don't have the actual User, Room, and Booking classes,
-# we'll create simple mock classes for testing purposes.
+# These simulate the behavior of the real classes for isolated testing.
 
 
 class MockUser:
@@ -22,8 +23,9 @@ class MockRoom:
         self.bookings = []
 
     def is_available(self, start_date, end_date):
-        # Simple availability check for testing
+        """A simple availability check for our mock room."""
         for booking in self.bookings:
+            # This logic checks for any overlap between the requested dates and existing bookings.
             if not (end_date <= booking.start_date or start_date >= booking.end_date):
                 return False
         return True
@@ -32,7 +34,8 @@ class MockRoom:
         self.bookings.append(booking)
 
     def remove_booking(self, booking):
-        self.bookings.remove(booking)
+        if booking in self.bookings:
+            self.bookings.remove(booking)
 
 
 class MockBooking:
@@ -52,11 +55,9 @@ class MockBooking:
 class TestBookingManager(unittest.TestCase):
 
     def setUp(self):
-        """Set up a new BookingManager and mock data for each test."""
+        """Set up a new BookingManager and mock data before each test runs."""
         self.manager = BookingManager()
 
-        # Mock dependencies that are not part of BookingManager
-        # This makes our tests focused only on BookingManager's logic
         self.user1 = MockUser(user_id=1)
         self.room1 = MockRoom(room_number=101, price_per_night=150)
         self.room2 = MockRoom(room_number=102, price_per_night=200)
@@ -64,12 +65,7 @@ class TestBookingManager(unittest.TestCase):
         self.manager.users = [self.user1]
         self.manager.rooms = [self.room1, self.room2]
 
-        # Replace the real Booking class with our mock for consistent testing
-        self.manager.bookings.append = lambda b: super(type(self.manager.bookings), self.manager.bookings).append(
-            MockBooking(b.booking_id, b.user, b.room, b.start_date,
-                        b.end_date, b.total_cost, b.status)
-        )
-
+    @patch('BookingManager.Booking', new=MockBooking)
     def test_create_booking_success(self):
         """Test successful creation of a booking."""
         start = date.today() + timedelta(days=10)
@@ -79,9 +75,9 @@ class TestBookingManager(unittest.TestCase):
 
         self.assertTrue(result)
         self.assertEqual(len(self.manager.bookings), 1)
+        self.assertIsInstance(self.manager.bookings[0], MockBooking)
         self.assertEqual(self.manager.bookings[0].room.room_number, 101)
         self.assertEqual(self.manager.bookings[0].user.user_id, 1)
-        # 5 nights * 150 per night
         self.assertEqual(self.manager.bookings[0].total_cost, 5 * 150)
 
     def test_create_booking_user_not_found(self):
@@ -116,21 +112,20 @@ class TestBookingManager(unittest.TestCase):
         with self.assertRaises(InvalidDateRangeError):
             self.manager.create_booking(1, 101, start, end)
 
+    @patch('BookingManager.Booking', new=MockBooking)
     def test_create_booking_room_unavailable(self):
-        """Test booking creation fails if the room is already booked for the dates."""
+        """Test booking creation fails if the room is already booked."""
         start1 = date.today() + timedelta(days=20)
         end1 = date.today() + timedelta(days=25)
-
-        # First booking should succeed
         self.manager.create_booking(1, 101, start1, end1)
 
-        # Second booking attempt for overlapping dates should fail
         start2 = date.today() + timedelta(days=22)
         end2 = date.today() + timedelta(days=27)
 
         with self.assertRaises(RoomUnavailableError):
             self.manager.create_booking(1, 101, start2, end2)
 
+    @patch('BookingManager.Booking', new=MockBooking)
     def test_cancel_booking_success(self):
         """Test successful cancellation of an existing booking."""
         start = date.today() + timedelta(days=30)
@@ -148,15 +143,14 @@ class TestBookingManager(unittest.TestCase):
         with self.assertRaises(BookingNotFoundError):
             self.manager.cancel_booking(999)
 
+    @patch('BookingManager.Booking', new=MockBooking)
     def test_modify_booking_success(self):
         """Test successful modification of a booking."""
-        # Create an initial booking
         start1 = date.today() + timedelta(days=40)
         end1 = date.today() + timedelta(days=45)
         self.manager.create_booking(1, 101, start1, end1)
         booking_to_modify = self.manager.bookings[0]
 
-        # New details for modification
         new_room_id = 102
         new_start = date.today() + timedelta(days=50)
         new_end = date.today() + timedelta(days=52)
@@ -165,16 +159,13 @@ class TestBookingManager(unittest.TestCase):
             booking_to_modify.booking_id, new_room_id, new_start, new_end)
 
         self.assertTrue(result)
-        # Check that the booking details were updated
         self.assertEqual(booking_to_modify.room.room_number, new_room_id)
         self.assertEqual(booking_to_modify.start_date, new_start)
         self.assertEqual(booking_to_modify.end_date, new_end)
-        self.assertEqual(booking_to_modify.total_cost, 2 *
-                         200)  # 2 nights * 200 per night
-        # Check that the booking was moved from the old room to the new one
+        self.assertEqual(booking_to_modify.total_cost, 2 * 200)
         self.assertNotIn(booking_to_modify, self.room1.bookings)
         self.assertIn(booking_to_modify, self.room2.bookings)
 
 
 if __name__ == '__main__':
-    unittest.main(argv=['first-arg-is-ignored'], exit=False)
+    unittest.main()
