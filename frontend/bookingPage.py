@@ -189,7 +189,7 @@ class BookingPage(QWidget):
                 booking_data['room_type'] = self.room_data.get('room_type', 'N/A')
                 
                 # Show confirmation page
-                from confirmationPlaceholder import ConfirmationPlaceHolder
+                from frontend.confirmationPlaceholder import ConfirmationPlaceHolder
                 self.confirmation_page = ConfirmationPlaceHolder(
                     self.app,
                     self.user_data,
@@ -201,8 +201,8 @@ class BookingPage(QWidget):
                 error_msg = response.json().get('error', 'Failed to create booking')
                 QMessageBox.warning(self, "Error", f"Failed to create booking: {error_msg}")
                 
-        except requests.exceptions as e:
-            QMessageBox.critical(self, "Error", f"server exception: {str(e)}")
+        except requests.exceptions.RequestException as e:
+            QMessageBox.critical(self, "Error", f"Server error: {str(e)}")
         except Exception as e:
             QMessageBox.critical(self, "Error", f"non server exception: {str(e)}")
 
