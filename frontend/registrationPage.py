@@ -19,7 +19,8 @@ class RegistrationPage(QWidget):
     def center(self):
         # Center the window on the screen
         frame_geometry = self.frameGeometry()
-        screen = QApplication.desktop().screenNumber(QApplication.desktop().cursor().pos())
+        screen = QApplication.desktop().screenNumber(
+            QApplication.desktop().cursor().pos())
         center_point = QApplication.desktop().screenGeometry(screen).center()
         frame_geometry.moveCenter(center_point)
         self.move(frame_geometry.topLeft())
@@ -81,13 +82,15 @@ class RegistrationPage(QWidget):
 
         # Register button
         self.register_button = QPushButton("Register")
-        self.register_button.setStyleSheet("background-color: #007BFF; color: white; padding: 10px;")
+        self.register_button.setStyleSheet(
+            "background-color: #007BFF; color: white; padding: 10px;")
         self.register_button.clicked.connect(self.handle_registration)
         main_layout.addWidget(self.register_button, alignment=Qt.AlignCenter)
 
         # Back to login link
         login_link = QLabel("Back to Login")
-        login_link.setStyleSheet("color: darkblue; text-decoration: underline;")
+        login_link.setStyleSheet(
+            "color: darkblue; text-decoration: underline;")
         login_link.setCursor(Qt.PointingHandCursor)
         login_link.mousePressEvent = lambda e: self.show_login()
         main_layout.addWidget(login_link, alignment=Qt.AlignCenter)
@@ -95,7 +98,8 @@ class RegistrationPage(QWidget):
         self.setLayout(main_layout)
 
     def show_login(self):
-        from frontend.loginPage import LoginPage  # gives some circular import issue if put at the top
+        # gives some circular import issue if put at the top
+        from loginPage import LoginPage
         self.login_window = LoginPage(self.app)
         self.login_window.show()
         self.close()
@@ -111,7 +115,7 @@ class RegistrationPage(QWidget):
         if not all([name, email, password, self.confirm_password_input.text()]):
             QMessageBox.warning(self, "Error", "All fields are required!")
             return
-            
+
         if password != self.confirm_password_input.text():
             QMessageBox.warning(self, "Error", "Passwords do not match!")
             return
@@ -137,7 +141,8 @@ class RegistrationPage(QWidget):
             if response.status_code == 200:
                 data = response.json()
                 if "error" in data:
-                    QMessageBox.warning(self, "Registration Failed", data["error"])
+                    QMessageBox.warning(
+                        self, "Registration Failed", data["error"])
                 else:
                     QMessageBox.information(self, "Success",
                                             "Registration successful! Please login with your credentials.")
@@ -149,4 +154,5 @@ class RegistrationPage(QWidget):
         except requests.exceptions as e:
             QMessageBox.critical(self, "Error", f"server exception: {str(e)}")
         except Exception as e:
-            QMessageBox.critical(self, "Error", f"non server exception: {str(e)}")
+            QMessageBox.critical(
+                self, "Error", f"non server exception: {str(e)}")

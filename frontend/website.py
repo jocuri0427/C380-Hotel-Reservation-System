@@ -12,6 +12,7 @@ BASE_URL = "http://127.0.0.1:5000"
 
 print("script is running")
 
+
 class hoverCard(QFrame):
     def __init__(self, icon, textLabel, onClick):
         super().__init__()
@@ -45,13 +46,14 @@ class hoverCard(QFrame):
     # just for decoration fr
     def enterEvent(self, event):
         self.setStyleSheet(self.hoverStyle)
-    
+
     def leaveEvent(self, event):
         self.setStyleSheet(self.regStyle)
 
     # when you click, it sends the text to the function passed in
     def mousePressEvent(self, event):
         self.onClick(self.textLabel)
+
 
 class Dashboard(QWidget):
     def __init__(self):
@@ -77,7 +79,8 @@ class Dashboard(QWidget):
         self.title.setFont(QFont("Arial", 20))
         self.title.setAlignment(Qt.AlignCenter)
 
-        self.subtitle = QLabel("Search and book the ideal accommodation for your stay")
+        self.subtitle = QLabel(
+            "Search and book the ideal accommodation for your stay")
         self.subtitle.setAlignment(Qt.AlignCenter)
 
         self.layoutMain.addWidget(self.title)
@@ -121,7 +124,8 @@ class Dashboard(QWidget):
 
         # button to activate the backend and then search for the rooms.
         self.searchButton = QPushButton("Search Rooms")
-        self.searchButton.setStyleSheet("background-color: #007BFF; color: white; padding: 10px;")
+        self.searchButton.setStyleSheet(
+            "background-color: #007BFF; color: white; padding: 10px;")
         self.layoutMain.addWidget(self.searchButton)
 
         # when we click search, it gets the backend data then updates price
@@ -129,9 +133,12 @@ class Dashboard(QWidget):
 
         # little cards for room options added some emojis so it doesnt look so dead yk
         self.cardLayout = QHBoxLayout()
-        self.cardLayout.addWidget(hoverCard("🔔", "Standard Room", self.setRoomType))
-        self.cardLayout.addWidget(hoverCard("🏨", "Deluxe Room", self.setRoomType))
-        self.cardLayout.addWidget(hoverCard("🏰", "Suite Room", self.setRoomType))
+        self.cardLayout.addWidget(
+            hoverCard("🔔", "Standard Room", self.setRoomType))
+        self.cardLayout.addWidget(
+            hoverCard("🏨", "Deluxe Room", self.setRoomType))
+        self.cardLayout.addWidget(
+            hoverCard("🏰", "Suite Room", self.setRoomType))
 
         self.layoutMain.addLayout(self.cardLayout)
 
@@ -154,7 +161,7 @@ class Dashboard(QWidget):
             data = r.json()
             self.rooms_from_backend = data if isinstance(data, list) else []
         except Exception:
-            
+
             self.rooms_from_backend = []
         self.update_price()
 
@@ -202,6 +209,7 @@ class Dashboard(QWidget):
         self.priceLabel.setText(
             f"{room_name}: ${nightly:.2f} × {nights} night{'s' if nights != 1 else ''} = ${total:.2f}"
         )
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

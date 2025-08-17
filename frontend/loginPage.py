@@ -6,8 +6,8 @@ from PyQt5.QtWidgets import (
     QVBoxLayout, QGridLayout, QMessageBox
 )
 
-from frontend.dashboardPlaceHolder import DashboardPlaceHolder
-from frontend.managerDashboardPlaceHolder import ManagerDashboardPlaceHolder
+from dashboardPlaceHolder import DashboardPlaceHolder
+from managerDashboardPlaceHolder import ManagerDashboardPlaceHolder
 
 
 class LoginPage(QWidget):
@@ -22,7 +22,8 @@ class LoginPage(QWidget):
     def center(self):
         # Center the window on the screen
         frame_geometry = self.frameGeometry()
-        screen = QApplication.desktop().screenNumber(QApplication.desktop().cursor().pos())
+        screen = QApplication.desktop().screenNumber(
+            QApplication.desktop().cursor().pos())
         center_point = QApplication.desktop().screenGeometry(screen).center()
         frame_geometry.moveCenter(center_point)
         self.move(frame_geometry.topLeft())
@@ -60,13 +61,15 @@ class LoginPage(QWidget):
 
         # Login button
         self.login_button = QPushButton("Login")
-        self.login_button.setStyleSheet("background-color: #007BFF; color: white; padding: 10px;")
+        self.login_button.setStyleSheet(
+            "background-color: #007BFF; color: white; padding: 10px;")
         self.login_button.clicked.connect(self.handle_login)
         main_layout.addWidget(self.login_button, alignment=Qt.AlignCenter)
 
         # Registration link
         register_link = QLabel("Create an account")
-        register_link.setStyleSheet("color: darkblue; text-decoration: underline;")
+        register_link.setStyleSheet(
+            "color: darkblue; text-decoration: underline;")
         register_link.setCursor(Qt.PointingHandCursor)
         register_link.mousePressEvent = lambda e: self.show_registration()
         main_layout.addWidget(register_link, alignment=Qt.AlignCenter)
@@ -74,7 +77,8 @@ class LoginPage(QWidget):
         self.setLayout(main_layout)
 
     def show_registration(self):
-        from frontend.registrationPage import RegistrationPage # gives some circular import issue if put at the top
+        # gives some circular import issue if put at the top
+        from registrationPage import RegistrationPage
         self.registration_window = RegistrationPage(self.app)
         self.registration_window.show()
         self.close()
@@ -125,15 +129,19 @@ class LoginPage(QWidget):
 
                     # Open appropriate dashboard based on user type
                     if user_data['user_type'] == 'manager':
-                        self.manager_dashboard = ManagerDashboardPlaceHolder(self.app, user_data)
+                        self.manager_dashboard = ManagerDashboardPlaceHolder(
+                            self.app, user_data)
                         self.manager_dashboard.show()
                     else:
-                        self.user_dashboard = DashboardPlaceHolder(self.app, user_data)
+                        self.user_dashboard = DashboardPlaceHolder(
+                            self.app, user_data)
                         self.user_dashboard.show()
             else:
-                QMessageBox.warning(self, "Error", "Login failed. Please check your credentials and try again.")
+                QMessageBox.warning(
+                    self, "Error", "Login failed. Please check your credentials and try again.")
 
         except requests.exceptions as e:
             QMessageBox.critical(self, "Error", f"server exception: {str(e)}")
         except Exception as e:
-            QMessageBox.critical(self, "Error", f"non server exception: {str(e)}")
+            QMessageBox.critical(
+                self, "Error", f"non server exception: {str(e)}")

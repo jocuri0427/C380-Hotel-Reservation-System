@@ -1,10 +1,10 @@
 from flask import Flask, request, jsonify
-from backend.database.database_central_system import Databasecentralsystem
+from database_central_system import Databasecentralsystem
 from mysql.connector import Error
-
-from backend.modules.confirmation import Confirmation
-from backend.modules.loginapi import loginform  # Import login blueprint
-from backend.modules.registerapi import registration_form  # Import registration blueprint
+from confirmation import Confirmation
+from loginapi import loginform  # Import login blueprint
+# Import registration blueprint
+from registerapi import registration_form
 
 app = Flask(__name__)
 
@@ -12,8 +12,6 @@ app.register_blueprint(loginform)  # Register login routes
 app.register_blueprint(registration_form)  # Register registration routes
 
 db = Databasecentralsystem()
-conn = db.get_connection()
-cursor = conn.cursor(dictionary=True)
 
 
 @app.route('/rooms', methods=['GET'])
@@ -86,7 +84,8 @@ def create_booking():
         if cursor.fetchone():
             return jsonify({"error": "Room not available"})
 
-        cursor.execute("SELECT id, name, email FROM users WHERE id = %s", (user_id,))
+        cursor.execute(
+            "SELECT id, name, email FROM users WHERE id = %s", (user_id,))
         user = cursor.fetchone()
 
         if not user:
@@ -129,7 +128,8 @@ def cancel_booking():
         if not reservation:
             return jsonify({'error': 'wrong number'})
 
-        cursor.execute("update reservations set status='cancelled' where confirmation_number=%s", (confirmation,))
+        cursor.execute(
+            "update reservations set status='cancelled' where confirmation_number=%s", (confirmation,))
         conn.commit()
 
         return jsonify({'message': 'booking cancel'})
@@ -172,7 +172,7 @@ def get_user_bookings(user_id):
     try:
         conn = db.get_connection()
         cursor = conn.cursor(dictionary=True)
-        
+
         # Get all bookings for the user with room details
         query = """
             SELECT b.*, r.room_type, r.price, res.status, res.confirmation_number
@@ -184,7 +184,7 @@ def get_user_bookings(user_id):
         """
         cursor.execute(query, (user_id,))
         bookings = cursor.fetchall()
-        
+
         # Format dates and calculate total price
         result = []
         for booking in bookings:
@@ -198,14 +198,15 @@ def get_user_bookings(user_id):
                 'status': booking['status'],
                 'confirmation_number': booking['confirmation_number']
             })
-            
+
         return jsonify(result)
-        
+
     except Error as e:
         return jsonify({'error': str(e)}), 500
     finally:
         cursor.close()
         conn.close()
+
 
 if __name__ == '__main__':
     app.run(debug=True)

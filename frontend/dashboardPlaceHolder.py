@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QLabel, QApplication, QPushButton, QMessageBox
 )
 
-from frontend.bookingPage import BookingPage
+from bookingPage import BookingPage
 
 
 class DashboardPlaceHolder(QWidget):
@@ -21,7 +21,8 @@ class DashboardPlaceHolder(QWidget):
     def center(self):
         # Center the window on the screen
         frame_geometry = self.frameGeometry()
-        screen = QApplication.desktop().screenNumber(QApplication.desktop().cursor().pos())
+        screen = QApplication.desktop().screenNumber(
+            QApplication.desktop().cursor().pos())
         center_point = QApplication.desktop().screenGeometry(screen).center()
         frame_geometry.moveCenter(center_point)
         self.move(frame_geometry.topLeft())
@@ -36,7 +37,8 @@ class DashboardPlaceHolder(QWidget):
         title.setAlignment(Qt.AlignCenter)
 
         # Placeholder text
-        placeholder = QLabel("Placeholder for Dashboard - Pending Tochi's Implementation")
+        placeholder = QLabel(
+            "Placeholder for Dashboard - Pending Tochi's Implementation")
         placeholder.setFont(QFont("Arial", 16))
         placeholder.setAlignment(Qt.AlignCenter)
 
@@ -53,13 +55,12 @@ class DashboardPlaceHolder(QWidget):
         # Add Book Room button
         book_button = QPushButton("Book a Room")
         book_button.clicked.connect(self.open_booking_form)
-        
+
         # Booking History button
         history_button = QPushButton("Booking History")
 
         history_button.clicked.connect(self.open_booking_history)
 
-        
         # Add widgets to main layout
         layout.addWidget(book_button)
         layout.addWidget(history_button)
@@ -78,16 +79,18 @@ class DashboardPlaceHolder(QWidget):
                 if rooms:
                     self.room_data = rooms[0]  # Store first available room
         except requests.RequestException as e:
-            QMessageBox.warning(self, "Error", f"Failed to fetch rooms data: {str(e)}")
+            QMessageBox.warning(
+                self, "Error", f"Failed to fetch rooms data: {str(e)}")
 
     def open_booking_form(self):
         if not self.room_data:
             QMessageBox.warning(self, "Error", "No rooms available")
             return
 
-        self.booking_form = BookingPage(self.app, self.user_data, self.room_data)
+        self.booking_form = BookingPage(
+            self.app, self.user_data, self.room_data)
         self.booking_form.show()
-        
+
     def open_booking_history(self):
         from bookingHistoryPage import BookingHistoryPage
         self.booking_history = BookingHistoryPage(self.app, self.user_data)
