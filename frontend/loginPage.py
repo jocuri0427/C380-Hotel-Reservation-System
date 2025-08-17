@@ -6,9 +6,8 @@ from PyQt5.QtWidgets import (
     QVBoxLayout, QGridLayout, QMessageBox
 )
 
-# Import the dashboard classes
-from dashboardPlaceHolder import DashboardPlaceHolder
-from managerDashboardPlaceHolder import ManagerDashboardPlaceHolder
+from frontend.dashboardPlaceHolder import DashboardPlaceHolder
+from frontend.managerDashboardPlaceHolder import ManagerDashboardPlaceHolder
 
 
 class LoginPage(QWidget):

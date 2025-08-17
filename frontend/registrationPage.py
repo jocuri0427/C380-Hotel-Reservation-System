@@ -61,13 +61,21 @@ class RegistrationPage(QWidget):
         form_layout.addWidget(password_label, 2, 0)
         form_layout.addWidget(self.password_input, 2, 1)
 
+        # Confirm Password field
+        confirm_password_label = QLabel("Confirm Password:")
+        self.confirm_password_input = QLineEdit()
+        self.confirm_password_input.setPlaceholderText("Confirm your password")
+        self.confirm_password_input.setEchoMode(QLineEdit.Password)
+        form_layout.addWidget(confirm_password_label, 3, 0)
+        form_layout.addWidget(self.confirm_password_input, 3, 1)
+
         # User type
         user_type_label = QLabel("Account Type:")
         self.user_type_combo = QComboBox()
         self.user_type_combo.addItem("User", "user")
         self.user_type_combo.addItem("Manager", "manager")
-        form_layout.addWidget(user_type_label, 3, 0)
-        form_layout.addWidget(self.user_type_combo, 3, 1)
+        form_layout.addWidget(user_type_label, 4, 0)
+        form_layout.addWidget(self.user_type_combo, 4, 1)
 
         main_layout.addLayout(form_layout)
 
@@ -100,8 +108,12 @@ class RegistrationPage(QWidget):
         user_type = self.user_type_combo.currentData()
 
         # Simple validation
-        if not all([name, email, password]):
+        if not all([name, email, password, self.confirm_password_input.text()]):
             QMessageBox.warning(self, "Error", "All fields are required!")
+            return
+            
+        if password != self.confirm_password_input.text():
+            QMessageBox.warning(self, "Error", "Passwords do not match!")
             return
 
         try:
