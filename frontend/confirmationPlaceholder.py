@@ -10,7 +10,7 @@ class ConfirmationPlaceHolder(QWidget):
         self.app = app
         self.user_data = user_data
         self.booking_data = booking_data or {}
-        self.setWindowTitle("Booking Confirmation Placeholder")
+        self.setWindowTitle("Booking Confirmation")
         self.resize(800, 600)
         self.center()
         self.setup_ui()
@@ -32,40 +32,36 @@ class ConfirmationPlaceHolder(QWidget):
         title.setFont(QFont("Arial", 24, QFont.Bold))
         title.setAlignment(Qt.AlignCenter)
         
-        # Placeholder text
-        placeholder = QLabel("Placeholder for Confirmation - Pending Toschi's Implementation")
-        placeholder.setFont(QFont("Arial", 16))
-        placeholder.setAlignment(Qt.AlignCenter)
-        
         # Confirmation message
-        message = QLabel("Booking Confirmed!")
-        message.setFont(QFont("Arial", 14))
+        message = QLabel("✅ Your booking is confirmed!\nThank you for choosing us 🙂")
+        message.setFont(QFont("Arial", 18))
         message.setAlignment(Qt.AlignCenter)
         
-        # Buttons
+        # Buttons row
         btn_layout = QHBoxLayout()
         
-        cancel_btn = QPushButton("on cancel booking success call")
-        cancel_btn.clicked.connect(self.on_back_to_dashboard)
+        cancel_btn = QPushButton("Cancel Booking")
+        cancel_btn.setStyleSheet("background-color: #dc3545; color: white; padding: 10px;")
+        cancel_btn.clicked.connect(self.go_back_to_dashboard)
         
-        modify_btn = QPushButton("on modify booking success call")
-        modify_btn.clicked.connect(self.on_back_to_dashboard)
+        modify_btn = QPushButton("Modify Booking")
+        modify_btn.setStyleSheet("background-color: #ffc107; color: black; padding: 10px;")
+        modify_btn.clicked.connect(self.go_back_to_dashboard)
         
         btn_layout.addWidget(cancel_btn)
         btn_layout.addWidget(modify_btn)
         
         # Add widgets to layout
         layout.addWidget(title)
-        layout.addWidget(placeholder)
-        layout.addSpacing(20)
+        layout.addSpacing(30)
         layout.addWidget(message)
-        layout.addSpacing(20)
+        layout.addSpacing(30)
         layout.addLayout(btn_layout)
         
         self.setLayout(layout)
 
-    def on_back_to_dashboard(self):
-        from dashboardPlaceHolder import DashboardPlaceHolder
-        self.dashboard = DashboardPlaceHolder(self.app, self.user_data)
+    def go_back_to_dashboard(self):
+        from website import Dashboard   # import Dashboard from website.py
+        self.dashboard = Dashboard(self.app, self.user_data)
         self.dashboard.show()
         self.close()

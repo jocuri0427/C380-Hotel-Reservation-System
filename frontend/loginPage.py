@@ -6,8 +6,8 @@ from PyQt5.QtWidgets import (
     QVBoxLayout, QGridLayout, QMessageBox
 )
 
-from dashboardPlaceHolder import DashboardPlaceHolder
-from managerDashboardPlaceHolder import ManagerDashboardPlaceHolder
+# ⬇️ use the real dashboard from website.py
+from website import Dashboard
 
 
 class LoginPage(QWidget):
@@ -68,8 +68,7 @@ class LoginPage(QWidget):
 
         # Registration link
         register_link = QLabel("Create an account")
-        register_link.setStyleSheet(
-            "color: darkblue; text-decoration: underline;")
+        register_link.setStyleSheet("color: darkblue; text-decoration: underline;")
         register_link.setCursor(Qt.PointingHandCursor)
         register_link.mousePressEvent = lambda e: self.show_registration()
         main_layout.addWidget(register_link, alignment=Qt.AlignCenter)
@@ -77,7 +76,7 @@ class LoginPage(QWidget):
         self.setLayout(main_layout)
 
     def show_registration(self):
-        # gives some circular import issue if put at the top
+        # avoids circular import
         from registrationPage import RegistrationPage
         self.registration_window = RegistrationPage(self.app)
         self.registration_window.show()
@@ -95,10 +94,7 @@ class LoginPage(QWidget):
 
         try:
             # Prepare login data
-            login_data = {
-                "email": email,
-                "password": password
-            }
+            login_data = {"email": email, "password": password}
 
             # Make API request
             response = requests.post(
@@ -113,35 +109,30 @@ class LoginPage(QWidget):
                 data = response.json()
                 if "error" in data:
                     QMessageBox.warning(self, "Login Failed", data["error"])
-                else:
-                    user_data = {
-                        'id': data.get('user_id'),
-                        'name': data.get('name', 'User'),
-                        'email': email,
-                        'user_type': data.get('user_type', 'user')
-                    }
+                    return
 
-                    # Store user data in the app instance
-                    self.app.current_user = user_data
+                user_data = {
+                    "id": data.get("user_id"),
+                    "name": data.get("name", "User"),
+                    "email": email,
+                    "user_type": data.get("user_type", "user")
+                }
 
-                    # Close login window
-                    self.close()
+                # Save to app
+                self.app.current_user = user_data
 
-                    # Open appropriate dashboard based on user type
-                    if user_data['user_type'] == 'manager':
-                        self.manager_dashboard = ManagerDashboardPlaceHolder(
-                            self.app, user_data)
-                        self.manager_dashboard.show()
-                    else:
-                        self.user_dashboard = DashboardPlaceHolder(
-                            self.app, user_data)
-                        self.user_dashboard.show()
+                # Open Dashboard from website.py
+                self.close()
+                self.user_dashboard = Dashboard(self.app, user_data)
+                self.user_dashboard.show()
+
             else:
                 QMessageBox.warning(
-                    self, "Error", "Login failed. Please check your credentials and try again.")
+                    self, "Error",
+                    "Login failed. Please check your credentials and try again."
+                )
 
         except requests.exceptions as e:
             QMessageBox.critical(self, "Error", f"server exception: {str(e)}")
         except Exception as e:
-            QMessageBox.critical(
-                self, "Error", f"non server exception: {str(e)}")
+            QMessageBox.critical(self, "Error", f"non server exception: {str(e)}")

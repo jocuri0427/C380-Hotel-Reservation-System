@@ -151,7 +151,7 @@ class RegistrationPage(QWidget):
                 error_msg = response.json().get('error', 'Registration failed. Please try again.')
                 QMessageBox.warning(self, "Error", error_msg)
 
-        except requests.exceptions as e:
+        except requests.exceptions.RequestException as e:
             QMessageBox.critical(self, "Error", f"server exception: {str(e)}")
         except Exception as e:
             QMessageBox.critical(
