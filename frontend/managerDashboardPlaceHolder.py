@@ -2,7 +2,7 @@ import requests
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QLabel, QApplication, QPushButton, QMessageBox, QTextEdit
+    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QApplication, QPushButton, QMessageBox, QTextEdit
 )
 
 
@@ -27,33 +27,9 @@ class ManagerDashboardPlaceHolder(QWidget):
 
     def create_ui(self):
         layout = QVBoxLayout()
-        layout.setAlignment(Qt.AlignCenter)
-
-        # Title
-        title = QLabel("Manager Dashboard")
-        title.setFont(QFont("Arial", 24, QFont.Bold))
-        title.setAlignment(Qt.AlignCenter)
-
-        # User info
-        user_info = QLabel(
-            f"Logged in as manager: {self.user_data.get('name', 'N/A')} ({self.user_data.get('email', 'N/A')}) "
-        )
-        user_info.setAlignment(Qt.AlignCenter)
-
-        self.report_button = QPushButton("Generate Bookings Report")
-        self.report_button.setFont(QFont("Arial", 12))
-        self.report_button.clicked.connect(self.generate_bookings_report)
-
-        layout.addWidget(title)
-        layout.addSpacing(20)
-        layout.addWidget(user_info)
-        layout.addSpacing(20)
-        layout.addWidget(self.report_button)  # Add button to layout
-
-        self.setLayout(layout)
 
         top_bar_layout = QHBoxLayout()
-        top_bar_layout.addStretch(1)  # Spacer to push button to the right
+        top_bar_layout.addStretch(1)
 
         self.logout_button = QPushButton("Log Out")
         self.logout_button.setFixedWidth(100)
@@ -62,11 +38,42 @@ class ManagerDashboardPlaceHolder(QWidget):
 
         layout.addLayout(top_bar_layout)
 
-        def handle_logout(self):
-            from loginPage import LoginPage
-            self.login_window = LoginPage(self.app)
-            self.login_window.show()
-            self.close()
+        title = QLabel("Manager Dashboard")
+        title.setFont(QFont("Arial", 24, QFont.Bold))
+        title.setAlignment(Qt.AlignCenter)
+
+        user_info = QLabel(
+            f"Logged in as manager: {self.user_data.get('name', 'N/A')} ({self.user_data.get('email', 'N/A')}) "
+        )
+        user_info.setAlignment(Qt.AlignCenter)
+
+        self.report_button = QPushButton("Generate Bookings Report")
+        self.report_button.setFont(QFont("Arial", 12))
+        self.report_button.setFixedWidth(250)
+        self.report_button.clicked.connect(self.generate_bookings_report)
+
+        button_layout = QHBoxLayout()
+        button_layout.addStretch(1)
+        button_layout.addWidget(self.report_button)
+        button_layout.addStretch(1)
+
+        # --- ADDED: Spacer to push content down from the top ---
+        layout.addStretch(1)
+
+        layout.addWidget(title)
+        layout.addSpacing(20)
+        layout.addWidget(user_info)
+        layout.addSpacing(20)
+        layout.addLayout(button_layout)
+        layout.addStretch(1)
+
+        self.setLayout(layout)
+
+    def handle_logout(self):
+        from loginPage import LoginPage
+        self.login_window = LoginPage(self.app)
+        self.login_window.show()
+        self.close()
 
     def generate_bookings_report(self):
         try:
@@ -75,7 +82,6 @@ class ManagerDashboardPlaceHolder(QWidget):
             if response.ok:
                 report_data = response.json()
 
-                # Format the report for display
                 report_text = "--- All Bookings Report ---\n\n"
                 for entry in report_data:
                     report_text += (
@@ -87,10 +93,8 @@ class ManagerDashboardPlaceHolder(QWidget):
                         "--------------------------------\n"
                     )
 
-                # Display the report in a scrollable message box
                 msg_box = QMessageBox()
                 msg_box.setWindowTitle("Bookings Report")
-
                 msg_box.setMinimumSize(700, 500)
 
                 text_edit = QTextEdit()
