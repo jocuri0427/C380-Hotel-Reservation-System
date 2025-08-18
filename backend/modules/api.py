@@ -13,6 +13,7 @@ app.register_blueprint(registration_form)  # Register registration routes
 
 db = Databasecentralsystem()
 
+
 @app.route('/rooms', methods=['GET'])
 def get_all_rooms():
     try:
@@ -213,7 +214,7 @@ def modify_booking():
     confirmation_number = data.get('confirmation_number')
     new_check_in = data.get('new_check_in')
     new_check_out = data.get('new_check_out')
-    new_room_type = data.get('new_room_type') # New field
+    new_room_type = data.get('new_room_type')  # New field
 
     try:
         conn = db.get_connection()
@@ -240,12 +241,12 @@ def modify_booking():
             )
             LIMIT 1
         """, (new_room_type, booking_id, new_check_in, new_check_out))
-        
+
         available_room = cursor.fetchone()
 
         if not available_room:
             return jsonify({'error': f'No available "{new_room_type}" for the selected dates.'}), 409
-        
+
         new_room_id = available_room['id']
 
         # Update the booking with the new room and dates
@@ -254,7 +255,7 @@ def modify_booking():
             SET room_id = %s, check_in = %s, check_out = %s 
             WHERE id = %s
         """, (new_room_id, new_check_in, new_check_out, booking_id))
-        
+
         conn.commit()
         return jsonify({'message': 'Booking modified successfully.'})
 
@@ -266,6 +267,8 @@ def modify_booking():
             conn.close()
 
 # --- NEW FUNCTION ---
+
+
 @app.route('/reports/all_bookings', methods=['GET'])
 def get_all_bookings_report():
     try:
@@ -304,6 +307,7 @@ def get_all_bookings_report():
             cursor.close()
             conn.close()
 # --- END OF NEW FUNCTION ---
+
 
 if __name__ == '__main__':
     app.run(debug=True)
