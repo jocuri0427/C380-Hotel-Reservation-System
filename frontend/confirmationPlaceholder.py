@@ -1,7 +1,8 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton,
-                             QHBoxLayout, QApplication)
+from PyQt5.QtWidgets import (
+    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QApplication, QPushButton, QMessageBox, QTextEdit
+)
 
 
 class ConfirmationPlaceHolder(QWidget):

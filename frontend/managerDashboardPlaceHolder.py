@@ -48,16 +48,33 @@ class ManagerDashboardPlaceHolder(QWidget):
         layout.addSpacing(20)
         layout.addWidget(user_info)
         layout.addSpacing(20)
-        layout.addWidget(self.report_button) # Add button to layout
+        layout.addWidget(self.report_button)  # Add button to layout
 
         self.setLayout(layout)
 
+        top_bar_layout = QHBoxLayout()
+        top_bar_layout.addStretch(1)  # Spacer to push button to the right
+
+        self.logout_button = QPushButton("Log Out")
+        self.logout_button.setFixedWidth(100)
+        self.logout_button.clicked.connect(self.handle_logout)
+        top_bar_layout.addWidget(self.logout_button)
+
+        layout.addLayout(top_bar_layout)
+
+        def handle_logout(self):
+            from loginPage import LoginPage
+            self.login_window = LoginPage(self.app)
+            self.login_window.show()
+            self.close()
+
     def generate_bookings_report(self):
         try:
-            response = requests.get("http://127.0.0.1:5000/reports/all_bookings")
+            response = requests.get(
+                "http://127.0.0.1:5000/reports/all_bookings")
             if response.ok:
                 report_data = response.json()
-                
+
                 # Format the report for display
                 report_text = "--- All Bookings Report ---\n\n"
                 for entry in report_data:
@@ -75,12 +92,12 @@ class ManagerDashboardPlaceHolder(QWidget):
                 msg_box.setWindowTitle("Bookings Report")
 
                 msg_box.setMinimumSize(700, 500)
-                
+
                 text_edit = QTextEdit()
                 text_edit.setPlainText(report_text)
                 text_edit.setReadOnly(True)
                 text_edit.setMinimumSize(650, 400)
-                
+
                 msg_box.layout().addWidget(text_edit, 0, 0, 1, msg_box.layout().columnCount())
                 msg_box.exec_()
 
@@ -89,4 +106,5 @@ class ManagerDashboardPlaceHolder(QWidget):
                 QMessageBox.warning(self, "Error", error_msg)
 
         except requests.exceptions.RequestException as e:
-            QMessageBox.critical(self, "Server Error", f"Could not connect to the server: {e}")
+            QMessageBox.critical(self, "Server Error",
+                                 f"Could not connect to the server: {e}")
