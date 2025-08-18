@@ -50,9 +50,13 @@ class ConfirmationPlaceHolder(QWidget):
         
         modify_btn = QPushButton("on modify booking success call")
         modify_btn.clicked.connect(self.on_back_to_dashboard)
+
+        back_btn = QPushButton("Go back to Dashboard")
+        back_btn.clicked.connect(self.on_back_to_dashboard)
         
         btn_layout.addWidget(cancel_btn)
         btn_layout.addWidget(modify_btn)
+        btn_layout.addWidget(back_btn)
         
         # Add widgets to layout
         layout.addWidget(title)
