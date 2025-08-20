@@ -17,7 +17,7 @@ class ManagerDashboardPlaceHolder(QWidget):
         self.create_ui()
 
     def center(self):
-        # Center the window on the screen
+        # center the window on screen
         frame_geometry = self.frameGeometry()
         screen = QApplication.desktop().screenNumber(
             QApplication.desktop().cursor().pos())
@@ -26,6 +26,7 @@ class ManagerDashboardPlaceHolder(QWidget):
         self.move(frame_geometry.topLeft())
 
     def create_ui(self):
+        # main UI setup: layout and widgets
         layout = QVBoxLayout()
 
         top_bar_layout = QHBoxLayout()
@@ -57,7 +58,6 @@ class ManagerDashboardPlaceHolder(QWidget):
         button_layout.addWidget(self.report_button)
         button_layout.addStretch(1)
 
-        #Spacer to push content down from the top ---
         layout.addStretch(1)
 
         layout.addWidget(title)
@@ -70,6 +70,7 @@ class ManagerDashboardPlaceHolder(QWidget):
         self.setLayout(layout)
 
     def handle_logout(self):
+        # handle logout action, show login page
         from loginPage import LoginPage
         self.login_window = LoginPage(self.app)
         self.login_window.show()
@@ -82,6 +83,7 @@ class ManagerDashboardPlaceHolder(QWidget):
             if response.ok:
                 report_data = response.json()
 
+                # format data to display
                 report_text = "--- All Bookings Report ---\n\n"
                 for entry in report_data:
                     report_text += (
@@ -93,6 +95,7 @@ class ManagerDashboardPlaceHolder(QWidget):
                         "--------------------------------\n"
                     )
 
+                # show report (read-only)
                 msg_box = QMessageBox()
                 msg_box.setWindowTitle("Bookings Report")
                 msg_box.setMinimumSize(700, 500)
@@ -106,9 +109,11 @@ class ManagerDashboardPlaceHolder(QWidget):
                 msg_box.exec_()
 
             else:
+                # error msg if report creation fails
                 error_msg = response.json().get('error', 'Failed to generate report.')
                 QMessageBox.warning(self, "Error", error_msg)
 
         except requests.exceptions.RequestException as e:
+            # error msg if server is unreachable
             QMessageBox.critical(self, "Server Error",
                                  f"Could not connect to the server: {e}")
