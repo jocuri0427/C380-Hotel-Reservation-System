@@ -6,24 +6,22 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import QDate, Qt
 
-# BookingForm class
-
 
 class BookingPage(QWidget):
-    # Constructor
     def __init__(self, app, user_data, room_data, parent=None):
         super().__init__(parent)
         self.app = app
         self.user_data = user_data
         self.room_data = room_data
-        # Setting up the window properties
+
+        # setting up the window properties
         self.setWindowTitle("Create Booking")
         self.setGeometry(200, 100, 500, 650)
         self.center()
         self.create_ui()
 
     def center(self):
-        # Center the window on the screen
+        # center the window on the screen
         frame_geometry = self.frameGeometry()
         screen = QApplication.desktop().screenNumber(
             QApplication.desktop().cursor().pos())
@@ -31,12 +29,11 @@ class BookingPage(QWidget):
         frame_geometry.moveCenter(center_point)
         self.move(frame_geometry.topLeft())
 
-    # Creating the UI
+    # UI
     def create_ui(self):
         layout = QVBoxLayout()
         form_layout = QGridLayout()
 
-        # Guest info (pre-filled from user data)
         form_layout.addWidget(QLabel("Name:"), 0, 0)
         self.name = QLineEdit(self.user_data.get('name', ''))
         self.name.setReadOnly(True)
@@ -64,7 +61,7 @@ class BookingPage(QWidget):
         self.price.setReadOnly(True)
         form_layout.addWidget(self.price, 4, 1)
 
-        # Dates (shifted down due to additional room info fields)
+        # Dates
         form_layout.addWidget(QLabel("Check-in Date:"), 5, 0)
 
         self.check_in = QDateEdit()
@@ -85,7 +82,7 @@ class BookingPage(QWidget):
 
         form_layout.addWidget(self.check_out, 6, 1)
 
-        # Payment info (shifted down)
+        # Payment info
         form_layout.addWidget(QLabel("Card Type:"), 7, 0)
 
         self.card_type = QComboBox()

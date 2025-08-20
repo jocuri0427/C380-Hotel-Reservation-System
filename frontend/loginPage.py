@@ -6,7 +6,6 @@ from PyQt5.QtWidgets import (
     QVBoxLayout, QGridLayout, QMessageBox
 )
 
-# Import all possible dashboards
 from website import Dashboard
 from managerDashboardPlaceHolder import ManagerDashboardPlaceHolder
 
@@ -21,7 +20,7 @@ class LoginPage(QWidget):
         self.create_ui()
 
     def center(self):
-        # Center the window on the screen
+        # center the window on the screen
         frame_geometry = self.frameGeometry()
         screen = QApplication.desktop().screenNumber(
             QApplication.desktop().cursor().pos())
@@ -33,24 +32,24 @@ class LoginPage(QWidget):
         main_layout = QVBoxLayout()
         main_layout.setAlignment(Qt.AlignCenter)
 
-        # Title
+        # title
         title = QLabel("Login to Your Account")
         title.setFont(QFont("Arial", 20))
         title.setAlignment(Qt.AlignCenter)
         main_layout.addWidget(title)
 
-        # Form layout
+        # form layout
         form_layout = QGridLayout()
         form_layout.setSpacing(10)
 
-        # Email field
+        # email field
         email_label = QLabel("Email:")
         self.email_input = QLineEdit()
         self.email_input.setPlaceholderText("Enter your email")
         form_layout.addWidget(email_label, 0, 0)
         form_layout.addWidget(self.email_input, 0, 1)
 
-        # Password field
+        # password field
         password_label = QLabel("Password:")
         self.password_input = QLineEdit()
         self.password_input.setPlaceholderText("Enter your password")
@@ -60,14 +59,14 @@ class LoginPage(QWidget):
 
         main_layout.addLayout(form_layout)
 
-        # Login button
+        # login button
         self.login_button = QPushButton("Login")
         self.login_button.setStyleSheet(
             "background-color: #007BFF; color: white; padding: 10px;")
         self.login_button.clicked.connect(self.handle_login)
         main_layout.addWidget(self.login_button, alignment=Qt.AlignCenter)
 
-        # Registration link
+        # registration link
         register_link = QLabel("Create an account")
         register_link.setStyleSheet(
             "color: darkblue; text-decoration: underline;")
@@ -78,27 +77,23 @@ class LoginPage(QWidget):
         self.setLayout(main_layout)
 
     def show_registration(self):
-        # avoids circular import
         from registrationPage import RegistrationPage
         self.registration_window = RegistrationPage(self.app)
         self.registration_window.show()
         self.close()
 
     def handle_login(self):
-        # Get form data
         email = self.email_input.text().strip()
         password = self.password_input.text()
 
-        # Simple validation
         if not all([email, password]):
             QMessageBox.warning(self, "Error", "All fields are required!")
             return
 
         try:
-            # Prepare login data
             login_data = {"email": email, "password": password}
 
-            # Make API request
+            # make API request
             response = requests.post(
                 "http://127.0.0.1:5000/login",
                 json=login_data,
@@ -106,7 +101,7 @@ class LoginPage(QWidget):
                 timeout=10
             )
 
-            # Handle response
+            # handle response
             if response.status_code == 200:
                 data = response.json()
                 if "error" in data:
@@ -120,10 +115,8 @@ class LoginPage(QWidget):
                     "user_type": data.get("user_type", "user")
                 }
 
-                # Save to app
                 self.app.current_user = user_data
 
-                # --- MODIFIED: Redirect based on user type ---
                 if user_data.get('user_type') == 'manager':
                     self.next_win = ManagerDashboardPlaceHolder(
                         self.app, user_data)
@@ -133,7 +126,6 @@ class LoginPage(QWidget):
                     self.next_win.show()
 
                 self.close()
-                # --- END OF MODIFICATION ---
 
             else:
                 QMessageBox.warning(

@@ -45,9 +45,11 @@ def booking_page(test_app, mock_app, room_data):
     # Patch QDesktopWidget to avoid needing a real screen
     with patch('PyQt5.QtWidgets.QDesktopWidget') as mock_desktop:
         mock_screen = MagicMock()
-        mock_screen.geometry.return_value.center.return_value = QPoint(100, 100)
+        mock_screen.geometry.return_value.center.return_value = QPoint(
+            100, 100)
         mock_desktop.screen.return_value = mock_screen
-        mock_desktop.screenGeometry.return_value.center.return_value = QPoint(100, 100)
+        mock_desktop.screenGeometry.return_value.center.return_value = QPoint(
+            100, 100)
 
         from frontend.bookingPage import BookingPage
         page = BookingPage(mock_app, mock_app.current_user, room_data)

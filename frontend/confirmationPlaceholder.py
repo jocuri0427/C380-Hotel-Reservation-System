@@ -17,7 +17,7 @@ class ConfirmationPlaceHolder(QWidget):
         self.setup_ui()
 
     def center(self):
-        # Center the window on the screen
+        # center the window on the screen
         frame_geometry = self.frameGeometry()
         screen = QApplication.desktop().screenNumber(
             QApplication.desktop().cursor().pos())
@@ -51,7 +51,6 @@ class ConfirmationPlaceHolder(QWidget):
         modify_btn = QPushButton("Modify Booking")
         modify_btn.setStyleSheet(
             "background-color: #ffc107; color: black; padding: 10px;")
-        # CORRECTED THIS LINE
         modify_btn.clicked.connect(self.go_to_booking_history)
 
         btn_layout.addWidget(cancel_btn)

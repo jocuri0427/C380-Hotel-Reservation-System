@@ -17,7 +17,7 @@ class RegistrationPage(QWidget):
         self.setup_ui()
 
     def center(self):
-        # Center the window on the screen
+        # center the window on the screen
         frame_geometry = self.frameGeometry()
         screen = QApplication.desktop().screenNumber(
             QApplication.desktop().cursor().pos())
@@ -30,31 +30,31 @@ class RegistrationPage(QWidget):
         main_layout.setAlignment(Qt.AlignCenter)
         main_layout.setSpacing(20)
 
-        # Title
+        # title
         title = QLabel("Create Your Account")
         title.setFont(QFont("Arial", 20, QFont.Bold))
         title.setAlignment(Qt.AlignCenter)
         main_layout.addWidget(title)
 
-        # Form layout
+        # form layout
         form_layout = QGridLayout()
         form_layout.setSpacing(15)
 
-        # Name field
+        # name field
         name_label = QLabel("Full Name:")
         self.name_input = QLineEdit()
         self.name_input.setPlaceholderText("Enter your full name")
         form_layout.addWidget(name_label, 0, 0)
         form_layout.addWidget(self.name_input, 0, 1)
 
-        # Email field
+        # email field
         email_label = QLabel("Email:")
         self.email_input = QLineEdit()
         self.email_input.setPlaceholderText("Enter your email")
         form_layout.addWidget(email_label, 1, 0)
         form_layout.addWidget(self.email_input, 1, 1)
 
-        # Password field
+        # password field
         password_label = QLabel("Password:")
         self.password_input = QLineEdit()
         self.password_input.setPlaceholderText("Create a password")
@@ -62,7 +62,7 @@ class RegistrationPage(QWidget):
         form_layout.addWidget(password_label, 2, 0)
         form_layout.addWidget(self.password_input, 2, 1)
 
-        # Confirm Password field
+        # confirm password field
         confirm_password_label = QLabel("Confirm Password:")
         self.confirm_password_input = QLineEdit()
         self.confirm_password_input.setPlaceholderText("Confirm your password")
@@ -70,7 +70,7 @@ class RegistrationPage(QWidget):
         form_layout.addWidget(confirm_password_label, 3, 0)
         form_layout.addWidget(self.confirm_password_input, 3, 1)
 
-        # User type
+        # ser type
         user_type_label = QLabel("Account Type:")
         self.user_type_combo = QComboBox()
         self.user_type_combo.addItem("User", "user")
@@ -105,13 +105,13 @@ class RegistrationPage(QWidget):
         self.close()
 
     def handle_registration(self):
-        # Get form data
+        # set form data
         name = self.name_input.text().strip()
         email = self.email_input.text().strip()
         password = self.password_input.text()
         user_type = self.user_type_combo.currentData()
 
-        # Simple validation
+        # simple validation
         if not all([name, email, password, self.confirm_password_input.text()]):
             QMessageBox.warning(self, "Error", "All fields are required!")
             return
@@ -121,7 +121,7 @@ class RegistrationPage(QWidget):
             return
 
         try:
-            # Prepare registration data
+            # prepare registration data
             registration_data = {
                 "name": name,
                 "email": email,
@@ -129,7 +129,7 @@ class RegistrationPage(QWidget):
                 "user_type": user_type
             }
 
-            # Make API request
+            # make API request
             response = requests.post(
                 "http://127.0.0.1:5000/register",
                 json=registration_data,
@@ -137,7 +137,7 @@ class RegistrationPage(QWidget):
                 timeout=10
             )
 
-            # Handle response
+            # handle response
             if response.status_code == 200:
                 data = response.json()
                 if "error" in data:
