@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import (
     QVBoxLayout, QMessageBox
 )
 
+
 class CancelBookingPage(QWidget):
     def __init__(self, app, user_data, confirmation_number=None):
         super().__init__()
@@ -28,7 +29,8 @@ class CancelBookingPage(QWidget):
         layout.addWidget(title)
 
         # Instruction Label
-        instruction_label = QLabel("Please enter the confirmation number of the booking you wish to cancel.")
+        instruction_label = QLabel(
+            "Please enter the confirmation number of the booking you wish to cancel.")
         instruction_label.setAlignment(Qt.AlignCenter)
         instruction_label.setWordWrap(True)
         layout.addWidget(instruction_label)
@@ -46,7 +48,7 @@ class CancelBookingPage(QWidget):
             "background-color: #dc3545; color: white; padding: 10px;")
         self.cancel_button.clicked.connect(self.handle_cancellation)
         layout.addWidget(self.cancel_button)
-        
+
         # Back Button
         self.back_button = QPushButton("Back to Dashboard")
         self.back_button.clicked.connect(self.go_back_to_dashboard)
@@ -57,7 +59,8 @@ class CancelBookingPage(QWidget):
     def handle_cancellation(self):
         confirmation_number = self.confirmation_input.text().strip()
         if not confirmation_number:
-            QMessageBox.warning(self, "Error", "Please enter a confirmation number.")
+            QMessageBox.warning(
+                self, "Error", "Please enter a confirmation number.")
             return
 
         try:
@@ -68,14 +71,16 @@ class CancelBookingPage(QWidget):
             )
 
             if response.ok:
-                QMessageBox.information(self, "Success", "Your booking has been successfully cancelled.")
+                QMessageBox.information(
+                    self, "Success", "Your booking has been successfully cancelled.")
                 self.go_back_to_dashboard()
             else:
                 error_msg = response.json().get('error', 'Failed to cancel booking.')
                 QMessageBox.warning(self, "Cancellation Failed", error_msg)
 
         except requests.exceptions.RequestException as e:
-            QMessageBox.critical(self, "Server Error", f"Could not connect to the server: {e}")
+            QMessageBox.critical(self, "Server Error",
+                                 f"Could not connect to the server: {e}")
 
     def go_back_to_dashboard(self):
         from website import Dashboard
@@ -83,9 +88,10 @@ class CancelBookingPage(QWidget):
         self.dashboard.show()
         self.close()
 
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    # Dummy data for testing
+    # dummy data for testing
     dummy_user = {"id": 1, "name": "Test User", "email": "test@example.com"}
     window = CancelBookingPage(app, dummy_user)
     window.show()

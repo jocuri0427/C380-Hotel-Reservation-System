@@ -19,7 +19,7 @@ class DashboardPlaceHolder(QWidget):
         self.create_ui()
 
     def center(self):
-        # Center the window on the screen
+        # center the window on the screen
         frame_geometry = self.frameGeometry()
         screen = QApplication.desktop().screenNumber(
             QApplication.desktop().cursor().pos())
@@ -31,18 +31,18 @@ class DashboardPlaceHolder(QWidget):
         layout = QVBoxLayout()
         layout.setAlignment(Qt.AlignCenter)
 
-        # Title
+        # title
         title = QLabel("Dashboard")
         title.setFont(QFont("Arial", 24, QFont.Bold))
         title.setAlignment(Qt.AlignCenter)
 
-        # Placeholder text
+        # placeholder text
         placeholder = QLabel(
             "Placeholder for Dashboard - Pending Tochi's Implementation")
         placeholder.setFont(QFont("Arial", 16))
         placeholder.setAlignment(Qt.AlignCenter)
 
-        # User info
+        # user info
         user_info = QLabel(
             f"Logged in as user: {self.user_data.get('name', 'User')} ({self.user_data.get('email', 'N/A')}) "
         )
@@ -52,23 +52,23 @@ class DashboardPlaceHolder(QWidget):
         layout.addSpacing(30)
         layout.addWidget(placeholder)
         layout.addSpacing(30)
-        # Add Book Room button
+        # add Book Room button
         book_button = QPushButton("Book a Room")
         book_button.clicked.connect(self.open_booking_form)
 
-        # Booking History button
+        # booking History button
         history_button = QPushButton("Booking History")
 
         history_button.clicked.connect(self.open_booking_history)
 
-        # Add widgets to main layout
+        # add widgets to main layout
         layout.addWidget(book_button)
         layout.addWidget(history_button)
         layout.addWidget(user_info)
         layout.addWidget(book_button)
         self.setLayout(layout)
 
-        # Fetch rooms from backend
+        # fetch rooms from backend
         self.fetch_rooms()
 
     def fetch_rooms(self):
@@ -77,7 +77,7 @@ class DashboardPlaceHolder(QWidget):
             if response.status_code == 200:
                 rooms = response.json()
                 if rooms:
-                    self.room_data = rooms[0]  # Store first available room
+                    self.room_data = rooms[0]
         except requests.RequestException as e:
             QMessageBox.warning(
                 self, "Error", f"Failed to fetch rooms data: {str(e)}")

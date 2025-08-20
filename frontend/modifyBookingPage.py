@@ -70,7 +70,6 @@ class ModifyBookingPage(QWidget):
 
     def load_room_types(self):
         try:
-            # --- CORRECTED THIS LINE: Changed 12.0.0.1 to 127.0.0.1 ---
             response = requests.get("http://127.0.0.1:5000/rooms")
             if response.ok:
                 rooms = response.json()

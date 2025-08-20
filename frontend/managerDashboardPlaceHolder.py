@@ -57,7 +57,6 @@ class ManagerDashboardPlaceHolder(QWidget):
         button_layout.addWidget(self.report_button)
         button_layout.addStretch(1)
 
-        # --- ADDED: Spacer to push content down from the top ---
         layout.addStretch(1)
 
         layout.addWidget(title)

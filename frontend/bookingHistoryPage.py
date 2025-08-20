@@ -33,10 +33,8 @@ class BookingHistoryPage(QWidget):
             ["Room Type", "Check-in", "Check-out", "Price PerNight", "Status", "Action"])
         self.history_table.setEditTriggers(QTableWidget.NoEditTriggers)
 
-        # CORRECTED RESIZING LOGIC
         header = self.history_table.horizontalHeader()
-        header.setSectionResizeMode(0, QHeaderView.Stretch) # Room Type
-        # Let the other columns, including Action, resize to their content
+        header.setSectionResizeMode(0, QHeaderView.Stretch)  # room Type
         header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(2, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(3, QHeaderView.ResizeToContents)
@@ -59,53 +57,63 @@ class BookingHistoryPage(QWidget):
                 self.display_bookings(bookings)
             else:
                 error_msg = response.json().get('error', 'Failed to load bookings')
-                QMessageBox.warning(self, "Error", f"Failed to load bookings: {error_msg}")
+                QMessageBox.warning(
+                    self, "Error", f"Failed to load bookings: {error_msg}")
         except requests.exceptions.RequestException as e:
             QMessageBox.critical(self, "Error", f"server exception: {str(e)}")
         except Exception as e:
-            QMessageBox.critical(self, "Error", f"non server exception: {str(e)}")
+            QMessageBox.critical(
+                self, "Error", f"non server exception: {str(e)}")
 
     def display_bookings(self, bookings):
         self.history_table.setRowCount(len(bookings))
 
         for row, booking in enumerate(bookings):
-            self.history_table.setItem(row, 0, QTableWidgetItem(booking.get('room_type', 'N/A')))
-            self.history_table.setItem(row, 1, QTableWidgetItem(booking.get('check_in', 'N/A')))
-            self.history_table.setItem(row, 2, QTableWidgetItem(booking.get('check_out', 'N/A')))
-            # MODIFIED: Formatted the price to always show two decimal places
+            self.history_table.setItem(
+                row, 0, QTableWidgetItem(booking.get('room_type', 'N/A')))
+            self.history_table.setItem(
+                row, 1, QTableWidgetItem(booking.get('check_in', 'N/A')))
+            self.history_table.setItem(
+                row, 2, QTableWidgetItem(booking.get('check_out', 'N/A')))
             price_per_night = booking.get('price_per_night', 0)
-            self.history_table.setItem(row, 3, QTableWidgetItem(f"${price_per_night:.2f}"))
-            self.history_table.setItem(row, 4, QTableWidgetItem(booking.get('status', 'N/A')))
+            self.history_table.setItem(
+                row, 3, QTableWidgetItem(f"${price_per_night:.2f}"))
+            self.history_table.setItem(
+                row, 4, QTableWidgetItem(booking.get('status', 'N/A')))
 
             action_widget = QWidget()
             action_layout = QHBoxLayout(action_widget)
             action_layout.setContentsMargins(0, 0, 0, 0)
-            
+
             confirmation_number = booking.get('confirmation_number')
             if booking.get('status', '').lower() == 'confirmed':
-                # Modify Button
+                # modify Button
                 modify_btn = QPushButton("Modify")
-                modify_btn.setMinimumWidth(80) # SET MINIMUM BUTTON WIDTH
-                modify_btn.clicked.connect(lambda _, b=booking: self.open_modify_page(b))
+                modify_btn.setMinimumWidth(80)
+                modify_btn.clicked.connect(
+                    lambda _, b=booking: self.open_modify_page(b))
                 action_layout.addWidget(modify_btn)
 
-                # Cancel Button
+                # cancel Button
                 cancel_btn = QPushButton("Cancel")
-                cancel_btn.setMinimumWidth(80) # SET MINIMUM BUTTON WIDTH
-                cancel_btn.clicked.connect(lambda _, cn=confirmation_number: self.open_cancel_page(cn))
+                cancel_btn.setMinimumWidth(80)
+                cancel_btn.clicked.connect(
+                    lambda _, cn=confirmation_number: self.open_cancel_page(cn))
                 action_layout.addWidget(cancel_btn)
 
             self.history_table.setCellWidget(row, 5, action_widget)
 
     def open_cancel_page(self, confirmation_number):
         from cancelBookingPage import CancelBookingPage
-        self.cancel_page = CancelBookingPage(self.app, self.user_data, confirmation_number)
+        self.cancel_page = CancelBookingPage(
+            self.app, self.user_data, confirmation_number)
         self.cancel_page.show()
         self.close()
 
     def open_modify_page(self, booking_data):
         from modifyBookingPage import ModifyBookingPage
-        self.modify_page = ModifyBookingPage(self.app, self.user_data, booking_data)
+        self.modify_page = ModifyBookingPage(
+            self.app, self.user_data, booking_data)
         self.modify_page.show()
         self.close()
 
