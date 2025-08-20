@@ -8,13 +8,13 @@ from PyQt5.QtCore import Qt, QDate
 
 import requests
 
-BASE_URL = "http://127.0.0.1:5000"
+base_url = "http://127.0.0.1:5000"
 
 print("script is running")  # quick check it launched
 
 
 class HoverCard(QFrame):
-    # Clickable room card. Simple and clear.
+    # clickable room card, simple and clear
     def __init__(self, icon, textLabel, onClick):
         super().__init__()
         self.setFrameShape(QFrame.NoFrame)
@@ -55,7 +55,7 @@ class HoverCard(QFrame):
 
 
 class Dashboard(QWidget):
-    # Main screen. Pick dates. Pick a room. Book it.
+    # main screen -> pick dates -> pick room -> book it
     def __init__(self, app=None, userData=None):
         super().__init__()
         self.app = app
@@ -65,11 +65,11 @@ class Dashboard(QWidget):
         self.setWindowTitle(f"Hotel Reservation System. Welcome, {who}")
         self.setGeometry(200, 100, 800, 520)
 
-        # One session for all API calls. Faster and cleaner.
+        # one session for all API calls, faster and cleaner
         self.http = requests.Session()
         self.http.headers.update({"X-App": "hotel-desktop-ui"})
 
-        # Cache results for the same date range.
+        # cache results for the same date range
         self.roomCache = {}
 
         self.uiSetup()
@@ -86,7 +86,7 @@ class Dashboard(QWidget):
         topBarLayout.addWidget(self.logoutButton)
         self.layoutMain.addLayout(topBarLayout)
 
-        # fallback prices if API is quiet
+        # fallback prices if api is quiet
         self.nightlyPrices = {
             "Standard Room": 120,
             "Deluxe Room": 175,
@@ -143,12 +143,14 @@ class Dashboard(QWidget):
         # booking and history actions
         actionsRow = QHBoxLayout()
         self.bookNowBtn = QPushButton("Continue to Booking")
-        self.bookNowBtn.setStyleSheet("background-color: #007BFF; color: white; padding: 10px;")
+        self.bookNowBtn.setStyleSheet(
+            "background-color: #007BFF; color: white; padding: 10px;")
         self.bookNowBtn.clicked.connect(self.onBookNow)
         self.bookNowBtn.setEnabled(False)  # enable after a room is chosen
 
         self.viewHistoryBtn = QPushButton("View Past Bookings")
-        self.viewHistoryBtn.setStyleSheet("background-color: #6c757d; color: white; padding: 10px;")
+        self.viewHistoryBtn.setStyleSheet(
+            "background-color: #6c757d; color: white; padding: 10px;")
         self.viewHistoryBtn.clicked.connect(self.onViewHistory)
 
         actionsRow.addWidget(self.bookNowBtn)
@@ -158,20 +160,23 @@ class Dashboard(QWidget):
 
         # room choice cards
         self.cardLayout = QHBoxLayout()
-        self.cardLayout.addWidget(HoverCard("🔔", "Standard Room", self.setRoomType))
-        self.cardLayout.addWidget(HoverCard("🏨", "Deluxe Room", self.setRoomType))
-        self.cardLayout.addWidget(HoverCard("🏰", "Suite Room", self.setRoomType))
+        self.cardLayout.addWidget(
+            HoverCard("🔔", "Standard Room", self.setRoomType))
+        self.cardLayout.addWidget(
+            HoverCard("🏨", "Deluxe Room", self.setRoomType))
+        self.cardLayout.addWidget(
+            HoverCard("🏰", "Suite Room", self.setRoomType))
         self.layoutMain.addLayout(self.cardLayout)
 
         self.setLayout(self.layoutMain)
 
-        # simple tab order. makes keyboard navigation smooth.
+        # simple tab order, makes keyboard navigation smooth
         self.setTabOrder(self.checkin, self.checkout)
         self.setTabOrder(self.checkout, self.guests)
         self.setTabOrder(self.guests, self.bookNowBtn)
 
     def handleLogout(self):
-        # Confirm before logging out.
+        # confirm before logging out
         reply = QMessageBox.question(self, "Log out", "Log out now?")
         if reply == QMessageBox.Yes:
             from loginPage import LoginPage
@@ -180,13 +185,13 @@ class Dashboard(QWidget):
             self.close()
 
     def setRoomType(self, value):
-        # Update selection and show price.
+        # update selection and show price
         self.roomType.setText(value)
         self.bookNowBtn.setEnabled(True)
         self.updatePrice()
 
     def getWithRetry(self, url, retries=3, **kwargs):
-        # Tiny retry loop for flaky networks.
+        # tiny retry loop for flaky networks
         lastErr = None
         for _ in range(retries):
             try:
@@ -198,7 +203,7 @@ class Dashboard(QWidget):
         raise lastErr if lastErr else RuntimeError("request failed")
 
     def fetchRoomsAndCache(self):
-        # Pull available rooms for the chosen dates. Cache the result.
+        # pull available rooms for the chosen dates, cache the result
         ci = self.checkin.date().toString("yyyy-MM-dd")
         co = self.checkout.date().toString("yyyy-MM-dd")
         key = (ci, co)
@@ -219,7 +224,7 @@ class Dashboard(QWidget):
             self.roomsFromBackend = []
 
     def matchRoomName(self, room):
-        # Find the name field the API used.
+        # find name field the api used.
         for k in ("name", "type", "room_type", "roomName", "title"):
             val = room.get(k)
             if isinstance(val, str) and val.strip():
@@ -227,7 +232,7 @@ class Dashboard(QWidget):
         return None
 
     def extractPrice(self, room):
-        # Grab a price field that exists and is a number.
+        # grab a price field that exists and is a number
         for k in ("base_price", "price", "rate", "nightly", "cost"):
             val = room.get(k)
             try:
@@ -238,7 +243,7 @@ class Dashboard(QWidget):
         return None
 
     def nightlyRate(self, roomName):
-        # Use API price if present. Fall back to local defaults.
+        # use api price if present, fall back to local defaults
         for room in self.roomsFromBackend:
             apiName = self.matchRoomName(room)
             if apiName and apiName.casefold() == roomName.casefold():
@@ -248,7 +253,7 @@ class Dashboard(QWidget):
         return float(self.nightlyPrices.get(roomName, 0.0))
 
     def updatePrice(self):
-        # Update the price label when dates or room change.
+        # update the price label when dates or room change
         roomName = self.roomType.text()
         if roomName == "Select a Room Type":
             self.priceLabel.setText("Select a room type to see the price.")
@@ -265,10 +270,11 @@ class Dashboard(QWidget):
         nightly = self.nightlyRate(roomName)
         total = nightly * nights
         plural = "nights" if nights != 1 else "night"
-        self.priceLabel.setText(f"{roomName}: ${nightly:.2f} × {nights} {plural} = ${total:.2f}")
+        self.priceLabel.setText(
+            f"{roomName}: ${nightly:.2f} × {nights} {plural} = ${total:.2f}")
 
     def buildBookingPayload(self):
-        # Build the JSON body to send when booking.
+        # build the JSON body to send when booking
         roomName = self.roomType.text()
         if roomName == "Select a Room Type":
             return None, "Please select a room type."
@@ -296,7 +302,7 @@ class Dashboard(QWidget):
         return bookingData, None
 
     def getSelectedRoomData(self, roomName):
-        # Return the full room dict that matches the choice.
+        # return the full room dict that matches the choice
         for room in self.roomsFromBackend:
             apiName = room.get("room_type")
             if apiName and apiName.strip().lower() == roomName.strip().lower():
@@ -304,7 +310,7 @@ class Dashboard(QWidget):
         return None
 
     def onBookNow(self):
-        # Booking flow. Validate, then open the booking page.
+        # booking flow-- validate, then open the booking page
         bookingPayload, err = self.buildBookingPayload()
         if err:
             QMessageBox.warning(self, "Please check your dates", err)
@@ -315,13 +321,15 @@ class Dashboard(QWidget):
         roomData = self.getSelectedRoomData(roomName)
 
         if roomData is None:
-            QMessageBox.information(self, "No matching room", "That room type is not available for these dates.")
+            QMessageBox.information(
+                self, "No matching room", "That room type is not available for these dates.")
             return
 
         try:
             from bookingPage import BookingPage
         except Exception as e:
-            QMessageBox.critical(self, "Could not open booking", f"Booking page failed to load.\n{e}")
+            QMessageBox.critical(self, "Could not open booking",
+                                 f"Booking page failed to load.\n{e}")
             return
 
         self.nextWin = BookingPage(self.app, self.userData, roomData)
@@ -329,11 +337,12 @@ class Dashboard(QWidget):
         self.close()
 
     def onViewHistory(self):
-        # Open the booking history page.
+        # opens the booking history page
         try:
             from bookingHistoryPage import BookingHistoryPage
         except Exception as e:
-            QMessageBox.critical(self, "Could not open history", f"Booking history failed to load.\n{e}")
+            QMessageBox.critical(self, "Could not open history",
+                                 f"Booking history failed to load.\n{e}")
             return
 
         self.nextWin = BookingHistoryPage(self.app, self.userData)
@@ -342,7 +351,7 @@ class Dashboard(QWidget):
 
 
 if __name__ == "__main__":
-    # Run the app with a dummy user. Replace with real user data after login.
+    # run the app with a dummy user, then replace with real user data after login
     qtapp = QApplication(sys.argv)
     dummyUser = {"id": 1, "name": "Guest", "email": "guest@example.com"}
     window = Dashboard(qtapp, dummyUser)
