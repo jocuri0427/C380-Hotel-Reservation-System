@@ -214,7 +214,7 @@ class Dashboard(QWidget):
 
         try:
             resp = self.getWithRetry(
-                f"{BASE_URL}/rooms/search",
+                f"{base_url}/rooms/search",
                 params={"check_in": ci, "check_out": co}
             )
             data = resp.json()
